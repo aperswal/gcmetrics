@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { ChatCard, count } from '@/components/chat-card';
+import { ChatSection, count } from '@/components/chat-section';
 import { sampleStats } from '@/lib/fixtures.test-helper';
 
 describe('count', () => {
@@ -11,11 +11,11 @@ describe('count', () => {
   });
 });
 
-describe('ChatCard', () => {
-  const html = renderToStaticMarkup(<ChatCard stats={sampleStats} />);
+describe('ChatSection', () => {
+  const html = renderToStaticMarkup(<ChatSection stats={sampleStats} />);
 
   it('renders the chat name, photo, and summary line', () => {
-    expect(html).toContain('<h2 class="font-sketch text-3xl">BBC</h2>');
+    expect(html).toContain('<h2 class="font-sketch text-4xl">BBC</h2>');
     expect(html).toContain('alt="BBC group photo"');
     expect(html).toContain('src="https://blob.example/photo.jpg"');
     expect(html).toContain('width="64"');
@@ -23,23 +23,26 @@ describe('ChatCard', () => {
     expect(html).toContain('10 messages, 4 laughs. Updated 2026-09-01.');
   });
 
-  it('renders all four tables in a two-column grid inside a sketched card', () => {
-    expect(html).toContain('<div class="flex flex-col gap-4 p-4 sm:p-6">');
-    expect(html).toContain('</header><hr/>');
-    expect(html).toContain('grid grid-cols-1 gap-4 lg:grid-cols-2');
+  it('stacks every table full width with a divider before each one', () => {
+    expect(html).toContain(
+      '<section class="flex flex-col gap-8"><header class="flex items-center gap-4">',
+    );
+    expect(html.match(/<\/header><div class="flex flex-col gap-8"><hr\/>/g)).toHaveLength(1);
+    expect(html.match(/<div class="flex flex-col gap-8"><hr\/><div><h3/g)).toHaveLength(4);
     expect(html.match(/<h3/g)).toHaveLength(4);
+    expect(html).not.toContain('grid');
   });
 
   it('falls back to the first character when there is no photo, keeping emoji whole', () => {
     const fallback = renderToStaticMarkup(
-      <ChatCard stats={{ ...sampleStats, photo: null, chat: '\u{1F355} pizza' }} />,
+      <ChatSection stats={{ ...sampleStats, photo: null, chat: '\u{1F355} pizza' }} />,
     );
     expect(fallback).toContain(
       '<div class="flex size-16 shrink-0 items-center justify-center rounded-full bg-muted text-2xl font-bold">\u{1F355}</div>',
     );
     expect(fallback).not.toContain('group photo');
     const blank = renderToStaticMarkup(
-      <ChatCard stats={{ ...sampleStats, photo: null, chat: '' }} />,
+      <ChatSection stats={{ ...sampleStats, photo: null, chat: '' }} />,
     );
     expect(blank).toContain('text-2xl font-bold"></div>');
   });

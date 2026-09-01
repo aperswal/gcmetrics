@@ -9,7 +9,7 @@ describe('Home', () => {
       <Home chats={[sampleStats, { ...sampleStats, chat: 'Zeta' }]} />,
     );
     expect(html).toContain('<h1 class="font-sketch text-5xl">Group chat stats</h1>');
-    expect(html).toContain('class="mx-auto flex w-full max-w-6xl flex-col gap-8 p-4 sm:p-8"');
+    expect(html).toContain('class="mx-auto flex w-full max-w-4xl flex-col gap-12 p-4 sm:p-8"');
     expect(html).toContain('>BBC</h2>');
     expect(html).toContain('>Zeta</h2>');
     expect(html).not.toContain('No chats exported yet');

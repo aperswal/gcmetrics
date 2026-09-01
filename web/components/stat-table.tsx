@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useId, type ReactElement } from 'react';
-import { DrawablyBadge, DrawablyCard } from '@/components/sketch';
+import { DrawablyBadge } from '@/components/sketch';
 import {
   Table,
   TableBody,
@@ -63,11 +63,7 @@ function Badge({ label }: { label: string | undefined }): ReactElement | null {
   if (label === undefined) {
     return null;
   }
-  return (
-    <DrawablyBadge variant="scribble" className="ml-2 whitespace-nowrap text-xs">
-      {label}
-    </DrawablyBadge>
-  );
+  return <DrawablyBadge className="ml-2 whitespace-nowrap text-xs">{label}</DrawablyBadge>;
 }
 
 function cellClass(cell: Cell): string {
@@ -98,7 +94,7 @@ function Rows({ model }: { model: TableModel }): ReactElement {
 export function StatTable({ model }: { model: TableModel }): ReactElement {
   const titleId = useId();
   return (
-    <DrawablyCard className="p-4">
+    <div>
       <h3 id={titleId} className="font-sketch mb-3 text-2xl">
         {model.title}
       </h3>
@@ -118,6 +114,6 @@ export function StatTable({ model }: { model: TableModel }): ReactElement {
           <Rows model={model} />
         </Table>
       )}
-    </DrawablyCard>
+    </div>
   );
 }

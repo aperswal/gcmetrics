@@ -29,7 +29,7 @@ describe('StatTable', () => {
 
   it('renders the title, headers, and accessible names', () => {
     expect(html).toMatch(
-      /<div class="p-4"><h3 id="([^"]+)" class="font-sketch mb-3 text-2xl">T<\/h3><div[^>]*><table[^>]*aria-labelledby="\1"/,
+      /<div><h3 id="([^"]+)" class="font-sketch mb-3 text-2xl">T<\/h3><div[^>]*><table[^>]*aria-labelledby="\1"/,
     );
     expect(html).toContain('scope="col" aria-label="Rank">#</th>');
     expect(html).toMatch(/<th[^>]*scope="col">Name<\/th>/);

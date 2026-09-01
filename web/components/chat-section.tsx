@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { ReactElement } from 'react';
-import { DrawablyCard, DrawablyDivider } from '@/components/sketch';
+import { DrawablyDivider } from '@/components/sketch';
 import { StatTable } from '@/components/stat-table';
 import type { ChatStats } from '@/lib/data';
 import { chatTables } from '@/lib/tables';
@@ -32,25 +32,25 @@ function ChatPhoto({ stats }: { stats: ChatStats }): ReactElement {
   );
 }
 
-export function ChatCard({ stats }: { stats: ChatStats }): ReactElement {
+export function ChatSection({ stats }: { stats: ChatStats }): ReactElement {
   return (
-    <DrawablyCard className="flex flex-col gap-4 p-4 sm:p-6">
+    <section className="flex flex-col gap-8">
       <header className="flex items-center gap-4">
         <ChatPhoto stats={stats} />
         <div>
-          <h2 className="font-sketch text-3xl">{stats.chat}</h2>
+          <h2 className="font-sketch text-4xl">{stats.chat}</h2>
           <p className="text-sm text-muted-foreground">
             {count(stats.messageCount, 'message')}, {count(stats.laughCount, 'laugh')}. Updated{' '}
             {stats.generatedAt.slice(0, DATE_LENGTH)}.
           </p>
         </div>
       </header>
-      <DrawablyDivider />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {chatTables(stats).map((model) => (
-          <StatTable key={model.title} model={model} />
-        ))}
-      </div>
-    </DrawablyCard>
+      {chatTables(stats).map((model) => (
+        <div key={model.title} className="flex flex-col gap-8">
+          <DrawablyDivider />
+          <StatTable model={model} />
+        </div>
+      ))}
+    </section>
   );
 }
