@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["app/**/*.tsx", "**/*.test.{ts,tsx}"],
+  "project": ["**/*.{ts,tsx,mjs}"],
+  "ignore": ["components/ui/**"],
+  "ignoreDependencies": ["shadcn", "tw-animate-css", "tailwindcss", "eslint-plugin-jsx-a11y"]
+}

@@ -1,0 +1,14 @@
+# Copy to config.toml and fill in. config.toml is gitignored.
+
+# Your name as it should appear in the tables (your own messages have no contact card).
+me = "Your Name"
+
+# Group chat names exactly as they appear in Messages, or chat ROWIDs from `uv run laughs.py --list`.
+chats = ["Chat One", "Chat Two"]
+
+# Optional: count who gets called this word. Remove the line to skip that table.
+word = "fob"
+
+# Optional: nicknames people use in messages, mapped to the name on their contact card.
+[aliases]
+Sam = "Samuel Example"

@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+coverage
+.stryker-tmp
+reports
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+.env*
+.vercel

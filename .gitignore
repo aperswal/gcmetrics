@@ -1,0 +1,8 @@
+__pycache__/
+.ruff_cache/
+.vercel/
+.DS_Store
+.env*
+config.toml
+web/data/
+web/public/attachments/

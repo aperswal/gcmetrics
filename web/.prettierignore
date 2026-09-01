@@ -1,0 +1,9 @@
+node_modules
+.next
+coverage
+.stryker-tmp
+reports
+pnpm-lock.yaml
+*.tsbuildinfo
+data/
+components/ui/
