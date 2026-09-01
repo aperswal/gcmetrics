@@ -56,7 +56,59 @@ describe('StatTable', () => {
     expect(html).toContain('height="600"');
     expect(html).toContain('<span class="text-muted-foreground">Attachment</span>');
     expect(html).not.toContain('<span></span>');
+    expect(html).not.toContain('ml-2');
     expect(html.match(/Attachment/g)).toHaveLength(1);
+  });
+
+  it('puts badges on the first and last row of the badge column only', () => {
+    const badged = renderToStaticMarkup(
+      <StatTable
+        model={{
+          title: 'B',
+          headers: ['#', 'Name', 'N'],
+          rows: [
+            [1, 'Top', 9],
+            [2, 'Mid', 5],
+            [3, 'Low', 1],
+          ],
+          badges: { column: 1, first: 'clown', last: 'get yo shit together' },
+        }}
+      />,
+    );
+    expect(badged).toMatch(
+      />Top<span[^>]*class="ml-2 whitespace-nowrap text-xs"[^>]*>clown<\/span>/,
+    );
+    expect(badged).toMatch(/>Low<span[^>]*>get yo shit together<\/span>/);
+    expect(badged).toMatch(/>Mid<\/td>/);
+    expect(badged).toMatch(/>9<\/td>/);
+    expect(badged.match(/<span/g)).toHaveLength(2);
+    const single = renderToStaticMarkup(
+      <StatTable
+        model={{
+          title: 'S',
+          headers: ['#', 'Name'],
+          rows: [[1, 'Only']],
+          badges: { column: 1, first: 'clown', last: 'get yo shit together' },
+        }}
+      />,
+    );
+    expect(single).toMatch(/>Only<span[^>]*>clown<\/span>/);
+    expect(single).not.toContain('get yo shit together');
+    const firstOnly = renderToStaticMarkup(
+      <StatTable
+        model={{
+          title: 'F',
+          headers: ['#', 'Name'],
+          rows: [
+            [1, 'A'],
+            [2, 'B'],
+          ],
+          badges: { column: 1, first: 'volume shooter' },
+        }}
+      />,
+    );
+    expect(firstOnly).toMatch(/>A<span[^>]*>volume shooter<\/span>/);
+    expect(firstOnly).toMatch(/>B<\/td>/);
   });
 
   it('shows a placeholder instead of an empty table', () => {

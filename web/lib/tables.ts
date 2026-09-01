@@ -8,11 +8,21 @@ export interface MessageCell {
 
 export type Cell = string | number | MessageCell;
 
+export interface Badges {
+  column: number;
+  first?: string;
+  last?: string;
+}
+
 export interface TableModel {
   title: string;
   headers: string[];
   rows: Cell[][];
+  badges?: Badges;
 }
+
+const NAME_COLUMN = 1;
+const SENDER_COLUMN = 3;
 
 function ranked(rows: Cell[][]): Cell[][] {
   return rows.map((row, index) => [index + 1, ...row]);
@@ -36,13 +46,15 @@ export function perMessageTable(stats: ChatStats): TableModel {
     rows: ranked(
       stats.perMessage.map((row) => [row.name, row.perMessage, row.laughs, row.messages]),
     ),
+    badges: { column: NAME_COLUMN, first: 'clown', last: 'get yo shit together' },
   };
 }
 
 export function funniestTable(stats: ChatStats): TableModel {
   return {
-    title: 'Funniest messages',
+    title: 'Most liked messages',
     headers: ['#', 'Laughs', 'Date', 'Sender', 'Message'],
+    badges: { column: SENDER_COLUMN, first: 'Aura farmer' },
     rows: ranked(
       stats.funniest.map((row) => [
         row.laughs,
@@ -59,6 +71,7 @@ export function laughersTable(stats: ChatStats): TableModel {
     title: 'Laughs the most',
     headers: ['#', 'Name', 'Laughs given', 'Most common reaction'],
     rows: ranked(stats.laughers.map((row) => [row.name, row.given, row.favorite])),
+    badges: { column: NAME_COLUMN, first: 'do you not have a job?' },
   };
 }
 

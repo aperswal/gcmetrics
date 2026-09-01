@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useId, type ReactElement } from 'react';
-import { DrawablyCard } from '@/components/sketch';
+import { DrawablyBadge, DrawablyCard } from '@/components/sketch';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Cell, MessageCell, TableModel } from '@/lib/tables';
+import type { Badges, Cell, MessageCell, TableModel } from '@/lib/tables';
 
 const RATE_DECIMALS = 3;
 
@@ -44,6 +44,32 @@ function CellContent({ cell }: { cell: Cell }): ReactElement {
   return <>{cell}</>;
 }
 
+function badgeFor(
+  badges: Badges | undefined,
+  row: number,
+  column: number,
+  count: number,
+): string | undefined {
+  if (badges?.column !== column) {
+    return undefined;
+  }
+  if (row === 0) {
+    return badges.first;
+  }
+  return row === count - 1 ? badges.last : undefined;
+}
+
+function Badge({ label }: { label: string | undefined }): ReactElement | null {
+  if (label === undefined) {
+    return null;
+  }
+  return (
+    <DrawablyBadge variant="scribble" className="ml-2 whitespace-nowrap text-xs">
+      {label}
+    </DrawablyBadge>
+  );
+}
+
 function cellClass(cell: Cell): string {
   return typeof cell === 'number' ? 'text-right tabular-nums' : 'text-left';
 }
@@ -60,6 +86,7 @@ function Rows({ model }: { model: TableModel }): ReactElement {
           {row.map((cell, column) => (
             <TableCell key={model.headers[column]} className={cellClass(cell)}>
               <CellContent cell={cell} />
+              <Badge label={badgeFor(model.badges, index, column, model.rows.length)} />
             </TableCell>
           ))}
         </TableRow>

@@ -1,3 +1,3 @@
 'use client';
 
-export { DrawablyCard, DrawablyDivider } from 'drawably/react';
+export { DrawablyBadge, DrawablyCard, DrawablyDivider } from 'drawably/react';

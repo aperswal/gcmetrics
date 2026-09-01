@@ -29,13 +29,15 @@ describe('tables', () => {
       title: 'Funniest per message',
       headers: ['#', 'Name', 'Per msg', 'Laughs', 'Msgs'],
       rows: [[1, 'Nitin', 0.641, 75, 117]],
+      badges: { column: 1, first: 'clown', last: 'get yo shit together' },
     });
   });
 
   it('builds the funniest-messages table with message cells', () => {
     expect(funniestTable(sampleStats)).toEqual({
-      title: 'Funniest messages',
+      title: 'Most liked messages',
       headers: ['#', 'Laughs', 'Date', 'Sender', 'Message'],
+      badges: { column: 3, first: 'Aura farmer' },
       rows: [
         [1, 6, '2026-01-15', 'Arun', { text: 'lol', image: null, sender: 'Arun' }],
         [
@@ -58,6 +60,7 @@ describe('tables', () => {
       title: 'Laughs the most',
       headers: ['#', 'Name', 'Laughs given', 'Most common reaction'],
       rows: [[1, 'Andrew', 909, 'haha']],
+      badges: { column: 1, first: 'do you not have a job?' },
     });
   });
 
@@ -65,7 +68,7 @@ describe('tables', () => {
     expect(chatTables(sampleStats).map((table) => table.title)).toEqual([
       'Most called fob',
       'Funniest per message',
-      'Funniest messages',
+      'Most liked messages',
       'Laughs the most',
     ]);
   });
@@ -73,7 +76,7 @@ describe('tables', () => {
   it('drops the mentions table when there is no word', () => {
     expect(chatTables({ ...sampleStats, mentionWord: null }).map((table) => table.title)).toEqual([
       'Funniest per message',
-      'Funniest messages',
+      'Most liked messages',
       'Laughs the most',
     ]);
   });
