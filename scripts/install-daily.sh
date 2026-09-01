@@ -13,6 +13,8 @@ for tool in uv vercel node git; do
   command -v "$tool" >/dev/null || { echo "$tool not found on the PATH daily.sh uses ($PATH)" >&2; exit 1; }
 done
 [[ -f "$repo/config.toml" ]] || { echo "config.toml is missing; copy config.example.toml and fill it in" >&2; exit 1; }
+python="$(cd "$repo" && uv python find --script export.py)"
+python="$(readlink -f "$python")"
 
 mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs"
 cat > "$plist" <<EOF
@@ -45,6 +47,7 @@ EOF
 launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$plist"
 echo "Installed $label. Runs $repo/scripts/daily.sh daily at 06:00. Log: $log"
-echo "launchd runs the job as /bin/bash, so grant Full Disk Access to /bin/bash:"
-echo "  System Settings > Privacy & Security > Full Disk Access > + > Cmd+Shift+G > /bin/bash"
-echo "Re-run this script after moving the folder. Remove the job with scripts/uninstall-daily.sh."
+echo "Grant Full Disk Access to this Python (System Settings > Privacy & Security > Full Disk Access > + > Cmd+Shift+G):"
+echo "  $python"
+echo "Test it now: launchctl kickstart gui/$(id -u)/$label && sleep 90 && tail -3 $log"
+echo "Re-run this script after moving the folder or after uv upgrades Python. Remove the job with scripts/uninstall-daily.sh."

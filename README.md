@@ -17,7 +17,7 @@ Haha, heart, sticker, and emoji tapbacks count. Thumbs up, thumbs down, exclamat
 
 - A Mac with Messages signed in. Everyone in the chat needs a contact card so names are published instead of phone numbers. The export stops and lists anyone who is missing one.
 - [uv](https://docs.astral.sh/uv/) for the Python scripts and [pnpm](https://pnpm.io/) for the site.
-- Full Disk Access for whatever runs the scripts (System Settings > Privacy & Security > Full Disk Access). Your terminal app for manual runs. `/bin/bash` for the daily job, see below.
+- Full Disk Access for whatever runs the scripts (System Settings > Privacy & Security > Full Disk Access). Your terminal app for manual runs. The uv Python binary for the daily job, see below.
 - Optional: a Vercel account for hosting and Vercel Blob for images.
 
 ## Setup
@@ -73,7 +73,9 @@ vercel deploy --prod
 scripts/install-daily.sh
 ```
 
-That checks the tools are on the PATH the job will use (`scripts/env.sh`), writes a plist pointing at this checkout into `~/Library/LaunchAgents/`, and loads it. It runs at 06:00 and logs to `~/Library/Logs/gcmetrics.log`. launchd runs the job as `/bin/bash`, and macOS attributes file access to that program, so grant Full Disk Access to `/bin/bash` (in the Full Disk Access list press the plus button, then Cmd+Shift+G and enter `/bin/bash`). Re-run the installer after moving the folder. Remove the job with `scripts/uninstall-daily.sh`.
+That checks the tools are on the PATH the job will use (`scripts/env.sh`), writes a plist pointing at this checkout into `~/Library/LaunchAgents/`, and loads it. It runs at 06:00 and logs to `~/Library/Logs/gcmetrics.log`.
+
+The installer prints the path of the Python that uv uses. Grant Full Disk Access to that exact file (in the Full Disk Access list press the plus button, then Cmd+Shift+G and paste the path). macOS only honors the grant on the binary that opens the database, so the job calls that Python directly rather than through `uv run`, and a grant on your terminal or on bash does not carry over. Re-run the installer after moving the folder or after uv upgrades Python, and grant the new path. Remove the job with `scripts/uninstall-daily.sh`.
 
 ## Development
 
