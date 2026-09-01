@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { useId, type ReactElement } from 'react';
-import { DrawablyBadge } from '@/components/sketch';
 import {
   Table,
   TableBody,
@@ -9,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Badges, Cell, MessageCell, TableModel } from '@/lib/tables';
+import type { Badge, Badges, Cell, MessageCell, TableModel } from '@/lib/tables';
 
 const RATE_DECIMALS = 3;
 
@@ -49,7 +48,7 @@ function badgeFor(
   row: number,
   column: number,
   count: number,
-): string | undefined {
+): Badge | undefined {
   if (badges?.column !== column) {
     return undefined;
   }
@@ -59,14 +58,21 @@ function badgeFor(
   return row === count - 1 ? badges.last : undefined;
 }
 
-function Badge({ label }: { label: string | undefined }): ReactElement | null {
-  if (label === undefined) {
+function BadgeLabel({ badge }: { badge: Badge | undefined }): ReactElement | null {
+  if (badge === undefined) {
     return null;
   }
-  return <DrawablyBadge className="ml-2 whitespace-nowrap text-xs">{label}</DrawablyBadge>;
+  return (
+    <span className={`ml-2 whitespace-nowrap text-xs font-semibold ${badge.className}`}>
+      {badge.emoji} {badge.text}
+    </span>
+  );
 }
 
-function cellClass(cell: Cell): string {
+function cellClass(cell: Cell, centered: boolean): string {
+  if (centered) {
+    return 'text-center';
+  }
   return typeof cell === 'number' ? 'text-right tabular-nums' : 'text-left';
 }
 
@@ -80,9 +86,12 @@ function Rows({ model }: { model: TableModel }): ReactElement {
       {model.rows.map((row, index) => (
         <TableRow key={index}>
           {row.map((cell, column) => (
-            <TableCell key={model.headers[column]} className={cellClass(cell)}>
+            <TableCell
+              key={model.headers[column]}
+              className={cellClass(cell, model.centered?.includes(column) === true)}
+            >
               <CellContent cell={cell} />
-              <Badge label={badgeFor(model.badges, index, column, model.rows.length)} />
+              <BadgeLabel badge={badgeFor(model.badges, index, column, model.rows.length)} />
             </TableCell>
           ))}
         </TableRow>

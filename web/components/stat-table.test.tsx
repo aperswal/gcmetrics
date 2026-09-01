@@ -2,6 +2,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { StatTable } from '@/components/stat-table';
 
+const first = { text: 'clown', emoji: 'C', className: 'text-pink-600' };
+const last = { text: 'get yo shit together', emoji: 'S', className: 'text-red-600' };
+const aura = { text: 'Aura farmer', emoji: 'A', className: 'text-violet-600' };
+
 describe('StatTable', () => {
   const html = renderToStaticMarkup(
     <StatTable
@@ -71,14 +75,16 @@ describe('StatTable', () => {
             [2, 'Mid', 5],
             [3, 'Low', 1],
           ],
-          badges: { column: 1, first: 'clown', last: 'get yo shit together' },
+          badges: { column: 1, first, last },
         }}
       />,
     );
-    expect(badged).toMatch(
-      />Top<span[^>]*class="ml-2 whitespace-nowrap text-xs"[^>]*>clown<\/span>/,
+    expect(badged).toContain(
+      '>Top<span class="ml-2 whitespace-nowrap text-xs font-semibold text-pink-600">C clown</span>',
     );
-    expect(badged).toMatch(/>Low<span[^>]*>get yo shit together<\/span>/);
+    expect(badged).toContain(
+      '>Low<span class="ml-2 whitespace-nowrap text-xs font-semibold text-red-600">S get yo shit together</span>',
+    );
     expect(badged).toMatch(/>Mid<\/td>/);
     expect(badged).toMatch(/>9<\/td>/);
     expect(badged.match(/<span/g)).toHaveLength(2);
@@ -88,11 +94,11 @@ describe('StatTable', () => {
           title: 'S',
           headers: ['#', 'Name'],
           rows: [[1, 'Only']],
-          badges: { column: 1, first: 'clown', last: 'get yo shit together' },
+          badges: { column: 1, first, last },
         }}
       />,
     );
-    expect(single).toMatch(/>Only<span[^>]*>clown<\/span>/);
+    expect(single).toMatch(/>Only<span[^>]*>C clown<\/span>/);
     expect(single).not.toContain('get yo shit together');
     const firstOnly = renderToStaticMarkup(
       <StatTable
@@ -103,12 +109,28 @@ describe('StatTable', () => {
             [1, 'A'],
             [2, 'B'],
           ],
-          badges: { column: 1, first: 'volume shooter' },
+          badges: { column: 1, first: aura },
         }}
       />,
     );
-    expect(firstOnly).toMatch(/>A<span[^>]*>volume shooter<\/span>/);
+    expect(firstOnly).toMatch(/>A<span[^>]*text-violet-600">A Aura farmer<\/span>/);
     expect(firstOnly).toMatch(/>B<\/td>/);
+  });
+
+  it('centers the columns the model asks for', () => {
+    const centered = renderToStaticMarkup(
+      <StatTable
+        model={{
+          title: 'C',
+          headers: ['#', 'Name', 'Reaction'],
+          rows: [[1, 'Sai', 'haha']],
+          centered: [2],
+        }}
+      />,
+    );
+    expect(centered).toMatch(/<td[^>]*class="[^"]*text-center"[^>]*>haha<\/td>/);
+    expect(centered).toMatch(/<td[^>]*class="[^"]*text-left"[^>]*>Sai<\/td>/);
+    expect(centered).toMatch(/<td[^>]*class="[^"]*text-right tabular-nums"[^>]*>1<\/td>/);
   });
 
   it('shows a placeholder instead of an empty table', () => {

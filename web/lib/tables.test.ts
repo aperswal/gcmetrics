@@ -1,12 +1,41 @@
 import { describe, expect, it } from 'vitest';
 import { sampleStats } from '@/lib/fixtures.test-helper';
 import {
+  AURA_FARMER,
+  CLOWN,
+  GET_IT_TOGETHER,
+  NO_JOB,
   chatTables,
   funniestTable,
   laughersTable,
   mentionsTable,
   perMessageTable,
 } from '@/lib/tables';
+
+describe('badges', () => {
+  it('define text, emoji, and a color class', () => {
+    expect(CLOWN).toEqual({
+      text: 'clown',
+      emoji: String.fromCodePoint(0x1f921),
+      className: 'text-pink-600',
+    });
+    expect(GET_IT_TOGETHER).toEqual({
+      text: 'get yo shit together',
+      emoji: String.fromCodePoint(0x1f480),
+      className: 'text-red-600',
+    });
+    expect(AURA_FARMER).toEqual({
+      text: 'Aura farmer',
+      emoji: String.fromCodePoint(0x2728),
+      className: 'text-violet-600',
+    });
+    expect(NO_JOB).toEqual({
+      text: 'do you not have a job?',
+      emoji: String.fromCodePoint(0x1f4bc),
+      className: 'text-amber-600',
+    });
+  });
+});
 
 describe('tables', () => {
   it('builds the mentions table with ranks', () => {
@@ -29,7 +58,7 @@ describe('tables', () => {
       title: 'Funniest per message',
       headers: ['#', 'Name', 'Per msg', 'Laughs', 'Msgs'],
       rows: [[1, 'Nitin', 0.641, 75, 117]],
-      badges: { column: 1, first: 'clown', last: 'get yo shit together' },
+      badges: { column: 1, first: CLOWN, last: GET_IT_TOGETHER },
     });
   });
 
@@ -37,7 +66,7 @@ describe('tables', () => {
     expect(funniestTable(sampleStats)).toEqual({
       title: 'Most liked messages',
       headers: ['#', 'Laughs', 'Date', 'Sender', 'Message'],
-      badges: { column: 3, first: 'Aura farmer' },
+      badges: { column: 3, first: AURA_FARMER },
       rows: [
         [1, 6, '2026-01-15', 'Arun', { text: 'lol', image: null, sender: 'Arun' }],
         [
@@ -60,7 +89,8 @@ describe('tables', () => {
       title: 'Laughs the most',
       headers: ['#', 'Name', 'Laughs given', 'Most common reaction'],
       rows: [[1, 'Andrew', 909, 'haha']],
-      badges: { column: 1, first: 'do you not have a job?' },
+      badges: { column: 1, first: NO_JOB },
+      centered: [3],
     });
   });
 
