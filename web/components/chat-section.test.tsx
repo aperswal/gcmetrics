@@ -28,8 +28,8 @@ describe('ChatSection', () => {
       '<section class="flex flex-col gap-8"><header class="flex items-center gap-4">',
     );
     expect(html.match(/<\/header><div class="flex flex-col gap-8"><hr\/>/g)).toHaveLength(1);
-    expect(html.match(/<div class="flex flex-col gap-8"><hr\/><div><h3/g)).toHaveLength(4);
-    expect(html.match(/<h3/g)).toHaveLength(4);
+    expect(html.match(/<div class="flex flex-col gap-8"><hr\/><div><h3/g)).toHaveLength(5);
+    expect(html.match(/<h3/g)).toHaveLength(5);
     expect(html).not.toContain('grid');
   });
 

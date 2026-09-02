@@ -5,10 +5,12 @@ import {
   CLOWN,
   GET_IT_TOGETHER,
   NO_JOB,
+  VOLUME_SHOOTER,
   chatTables,
   funniestTable,
   laughersTable,
   mentionsTable,
+  mostLaughsTable,
   perMessageTable,
 } from '@/lib/tables';
 
@@ -28,6 +30,11 @@ describe('badges', () => {
       text: 'Aura farmer',
       emoji: String.fromCodePoint(0x2728),
       className: 'text-violet-600',
+    });
+    expect(VOLUME_SHOOTER).toEqual({
+      text: 'volume shooter',
+      emoji: String.fromCodePoint(0x1f3c0),
+      className: 'text-orange-600',
     });
     expect(NO_JOB).toEqual({
       text: 'do you not have a job?',
@@ -60,6 +67,25 @@ describe('tables', () => {
       rows: [[1, 'Nitin', 0.641, 75, 117]],
       badges: { column: 1, first: CLOWN, last: GET_IT_TOGETHER },
     });
+  });
+
+  it('ranks people by total laughs without mutating the input', () => {
+    const perMessage = [
+      { name: 'Low', laughs: 2, messages: 1, perMessage: 2 },
+      { name: 'High', laughs: 9, messages: 30, perMessage: 0.3 },
+      { name: 'Mid', laughs: 5, messages: 5, perMessage: 1 },
+    ];
+    expect(mostLaughsTable({ ...sampleStats, perMessage })).toEqual({
+      title: 'Most funny messages',
+      headers: ['#', 'Name', 'Laughs', 'Msgs'],
+      rows: [
+        [1, 'High', 9, 30],
+        [2, 'Mid', 5, 5],
+        [3, 'Low', 2, 1],
+      ],
+      badges: { column: 1, first: VOLUME_SHOOTER },
+    });
+    expect(perMessage.map((row) => row.name)).toEqual(['Low', 'High', 'Mid']);
   });
 
   it('builds the funniest-messages table with message cells', () => {
@@ -106,6 +132,7 @@ describe('tables', () => {
     expect(chatTables(sampleStats).map((table) => table.title)).toEqual([
       'Most called fob',
       'Funniest per message',
+      'Most funny messages',
       'Most liked messages',
       'Laughs the most',
     ]);
@@ -114,6 +141,7 @@ describe('tables', () => {
   it('drops the mentions table when there is no word', () => {
     expect(chatTables({ ...sampleStats, mentionWord: null }).map((table) => table.title)).toEqual([
       'Funniest per message',
+      'Most funny messages',
       'Most liked messages',
       'Laughs the most',
     ]);

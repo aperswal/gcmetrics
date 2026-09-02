@@ -25,6 +25,7 @@ const CLOWN_FACE = 0x1f921;
 const SKULL = 0x1f480;
 const SPARKLES = 0x2728;
 const BRIEFCASE = 0x1f4bc;
+const BASKETBALL = 0x1f3c0;
 
 export const CLOWN: Badge = {
   text: 'clown',
@@ -40,6 +41,11 @@ export const AURA_FARMER: Badge = {
   text: 'Aura farmer',
   emoji: String.fromCodePoint(SPARKLES),
   className: 'text-violet-600',
+};
+export const VOLUME_SHOOTER: Badge = {
+  text: 'volume shooter',
+  emoji: String.fromCodePoint(BASKETBALL),
+  className: 'text-orange-600',
 };
 export const NO_JOB: Badge = {
   text: 'do you not have a job?',
@@ -87,6 +93,16 @@ export function perMessageTable(stats: ChatStats): TableModel {
   };
 }
 
+export function mostLaughsTable(stats: ChatStats): TableModel {
+  const rows = [...stats.perMessage].sort((a, b) => b.laughs - a.laughs);
+  return {
+    title: 'Most funny messages',
+    headers: ['#', 'Name', 'Laughs', 'Msgs'],
+    rows: ranked(rows.map((row) => [row.name, row.laughs, row.messages])),
+    badges: { column: NAME_COLUMN, first: VOLUME_SHOOTER },
+  };
+}
+
 export function funniestTable(stats: ChatStats): TableModel {
   return {
     title: 'Most liked messages',
@@ -115,7 +131,12 @@ export function laughersTable(stats: ChatStats): TableModel {
 }
 
 export function chatTables(stats: ChatStats): TableModel[] {
-  const tables = [perMessageTable(stats), funniestTable(stats), laughersTable(stats)];
+  const tables = [
+    perMessageTable(stats),
+    mostLaughsTable(stats),
+    funniestTable(stats),
+    laughersTable(stats),
+  ];
   const mentions = mentionsTable(stats);
   return mentions === null ? tables : [mentions, ...tables];
 }
