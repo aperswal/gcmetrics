@@ -4,7 +4,7 @@ export default {
   mutate: [
     'lib/**/*.ts',
     'components/**/*.tsx',
-    'app/**/*.tsx',
+    'app/**/*.{ts,tsx}',
     '!**/*.test.{ts,tsx}',
     '!**/*.test-helper.ts',
     '!components/ui/**',

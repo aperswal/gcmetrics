@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import RootLayout, { metadata } from '@/app/layout';
+import { existsSync } from 'node:fs';
+import RootLayout, { generateMetadata } from '@/app/layout';
 
 describe('RootLayout', () => {
   it('wraps children in an English html document', () => {
@@ -10,8 +11,10 @@ describe('RootLayout', () => {
     );
   });
 
-  it('sets the page title and description', () => {
-    expect(metadata.title).toBe('Group chat stats');
-    expect(metadata.description).toBe('Daily laugh leaderboards for your group chats');
+  it('builds metadata from the exported chats', () => {
+    const metadata = generateMetadata();
+    expect(typeof metadata.title).toBe('string');
+    expect(metadata.robots).toEqual({ index: true, follow: true });
+    expect(metadata.icons !== undefined).toBe(existsSync('public/og.png'));
   });
 });

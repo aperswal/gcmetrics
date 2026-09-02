@@ -27,7 +27,14 @@ from typing import TYPE_CHECKING
 
 import tomllib
 
-from images import Storage, choose_storage, export_image, first_image, group_photo
+from images import (
+    Storage,
+    choose_storage,
+    export_image,
+    export_site_images,
+    first_image,
+    group_photo,
+)
 from imessage import (
     CHAT_DB,
     Contacts,
@@ -228,6 +235,9 @@ def main(argv: list[str]) -> None:
     exports = {slug(chat): exporter.chat(chat) for chat in config.chats}
     write_exports(out_dir, exports)
     storage.finish()
+    photo = group_photo(exporter.conn, find_chat_ids(exporter.conn, config.chats[0]))
+    if photo and photo.exists():
+        export_site_images(photo, out_dir.parent / "public")
 
 
 if __name__ == "__main__":

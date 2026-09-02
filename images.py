@@ -41,6 +41,10 @@ UPLOAD_ATTEMPTS = 3
 RETRY_BASE = 2
 SERVER_ERROR = 500
 SIZE_LINES = 2
+ICON_EDGE = "512"
+OG_HEIGHT = "630"
+OG_WIDTH = "1200"
+OG_PAD = "FFFFFF"
 
 
 class Storage(Protocol):
@@ -176,3 +180,24 @@ def group_photo(conn: sqlite3.Connection, chat_ids: list[int]) -> Path | None:
         [*chat_ids, GROUP_PHOTO_ITEM, GROUP_PHOTO_ACTION],
     ).fetchone()
     return Path(row[0]).expanduser() if row else None
+
+
+def export_site_images(source: Path, public_dir: Path) -> None:
+    public_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        copy = Path(tmp) / source.name
+        shutil.copy(source, copy)
+        for name in ("icon.png", "apple-icon.png"):
+            sips(
+                "-s",
+                "format",
+                "png",
+                "-Z",
+                ICON_EDGE,
+                str(copy),
+                "--out",
+                str(public_dir / name),
+            )
+        og = public_dir / "og.png"
+        sips("-s", "format", "png", "-Z", OG_HEIGHT, str(copy), "--out", str(og))
+        sips("-p", OG_HEIGHT, OG_WIDTH, "--padColor", OG_PAD, str(og))

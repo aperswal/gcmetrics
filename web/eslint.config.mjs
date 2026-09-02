@@ -188,6 +188,10 @@ export default tseslint.config(
     },
   },
   {
+    files: ['lib/env.ts'],
+    rules: { 'no-restricted-syntax': ['error', ...NO_NON_ASCII_SELECTORS, NO_PLAIN_ERROR] },
+  },
+  {
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       'max-lines-per-function': 'off',
