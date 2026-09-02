@@ -1,7 +1,7 @@
 import type { Metadata, MetadataRoute } from 'next';
 import type { ChatStats } from '@/lib/data';
 
-export const OG_IMAGE_PATH = 'public/og.png';
+export const OG_IMAGE_NAME = 'og.png';
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;
 

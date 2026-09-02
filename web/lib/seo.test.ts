@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { sampleStats } from '@/lib/fixtures.test-helper';
 import {
-  OG_IMAGE_PATH,
+  OG_IMAGE_NAME,
   buildMetadata,
   robotsFor,
   siteDescription,
@@ -12,9 +12,9 @@ import {
 const site = new URL('https://choppelgangers.com');
 const two = [sampleStats, { ...sampleStats, chat: 'Other' }];
 
-describe('og image path', () => {
-  it('lives in public', () => {
-    expect(OG_IMAGE_PATH).toBe('public/og.png');
+describe('og image name', () => {
+  it('is og.png', () => {
+    expect(OG_IMAGE_NAME).toBe('og.png');
   });
 });
 
