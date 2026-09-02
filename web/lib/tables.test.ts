@@ -67,8 +67,15 @@ describe('tables', () => {
       title: 'Most liked messages',
       headers: ['#', 'Laughs', 'Date', 'Sender', 'Message'],
       badges: { column: 3, first: AURA_FARMER },
+      hiddenOnMobile: [2, 3],
       rows: [
-        [1, 6, '2026-01-15', 'Arun', { text: 'lol', image: null, sender: 'Arun' }],
+        [
+          1,
+          6,
+          '2026-01-15',
+          'Arun',
+          { text: 'lol', image: null, sender: 'Arun', date: '2026-01-15' },
+        ],
         [
           2,
           5,
@@ -78,6 +85,7 @@ describe('tables', () => {
             text: '',
             image: { src: 'https://blob.example/a.jpg', width: 800, height: 600 },
             sender: 'Rakii',
+            date: '2026-01-16',
           },
         ],
       ],

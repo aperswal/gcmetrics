@@ -13,7 +13,13 @@ describe('StatTable', () => {
         title: 'T',
         headers: ['#', 'Name', 'N', 'Rate', 'Message'],
         rows: [
-          [1, 'Sai', 9, 0.641, { text: 'hello there', image: null, sender: 'Sai' }],
+          [
+            1,
+            'Sai',
+            9,
+            0.641,
+            { text: 'hello there', image: null, sender: 'Sai', date: '2026-01-01' },
+          ],
           [
             2,
             'Rakii',
@@ -23,9 +29,10 @@ describe('StatTable', () => {
               text: '',
               image: { src: 'https://blob.example/a.jpg', width: 800, height: 600 },
               sender: 'Rakii',
+              date: '2026-01-02',
             },
           ],
-          [3, 'Nitin', 0, 2.5, { text: '', image: null, sender: 'Nitin' }],
+          [3, 'Nitin', 0, 2.5, { text: '', image: null, sender: 'Nitin', date: '2026-01-03' }],
         ],
       }}
     />,
@@ -51,14 +58,19 @@ describe('StatTable', () => {
 
   it('wraps message text, shows images, and labels bare attachments', () => {
     expect(html).toContain(
-      '<div class="flex max-w-md flex-col gap-2 whitespace-normal wrap-anywhere"><span>hello there</span></div>',
+      '<div class="flex max-w-md flex-col gap-2 whitespace-normal wrap-anywhere"><span class="text-xs text-muted-foreground sm:hidden">Sai, 2026-01-01</span><span>hello there</span></div>',
+    );
+    expect(html).toContain(
+      '<span class="text-xs text-muted-foreground sm:hidden">Rakii, 2026-01-02</span>',
     );
     expect(html).toContain('alt="Image sent by Rakii"');
     expect(html).toContain('src="https://blob.example/a.jpg"');
     expect(html).toContain('class="h-auto max-w-xs rounded-md"');
     expect(html).toContain('width="800"');
     expect(html).toContain('height="600"');
-    expect(html).toContain('<span class="text-muted-foreground">Attachment</span>');
+    expect(html).toContain(
+      '<div class="flex flex-col gap-1"><span class="text-xs text-muted-foreground sm:hidden">Nitin, 2026-01-03</span><span class="text-muted-foreground">Attachment</span></div>',
+    );
     expect(html).not.toContain('<span></span>');
     expect(html).not.toContain('ml-2');
     expect(html.match(/Attachment/g)).toHaveLength(1);
@@ -131,6 +143,27 @@ describe('StatTable', () => {
     expect(centered).toMatch(/<td[^>]*class="[^"]*text-center"[^>]*>haha<\/td>/);
     expect(centered).toMatch(/<td[^>]*class="[^"]*text-left"[^>]*>Sai<\/td>/);
     expect(centered).toMatch(/<td[^>]*class="[^"]*text-right tabular-nums"[^>]*>1<\/td>/);
+  });
+
+  it('hides the requested columns below the small breakpoint', () => {
+    const hidden = renderToStaticMarkup(
+      <StatTable
+        model={{
+          title: 'H',
+          headers: ['#', 'Date', 'Reaction'],
+          rows: [[1, '2026-01-01', 'haha']],
+          centered: [2],
+          hiddenOnMobile: [1, 2],
+        }}
+      />,
+    );
+    expect(hidden).toMatch(/<th[^>]*class="[^"]*pr-0 hidden sm:table-cell" scope="col">Date<\/th>/);
+    expect(hidden).toMatch(/<th[^>]*class="[^"]*pr-0" scope="col" aria-label="Rank">#<\/th>/);
+    expect(hidden).toMatch(
+      /<td[^>]*class="[^"]*hidden sm:table-cell text-left"[^>]*>2026-01-01<\/td>/,
+    );
+    expect(hidden).toMatch(/<td[^>]*class="[^"]*hidden sm:table-cell text-center"[^>]*>haha<\/td>/);
+    expect(hidden).toMatch(/<td[^>]*class="[^"]*pr-0 text-right tabular-nums"[^>]*>1<\/td>/);
   });
 
   it('shows a placeholder instead of an empty table', () => {

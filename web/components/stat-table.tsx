@@ -13,11 +13,22 @@ import type { Badge, Badges, Cell, MessageCell, TableModel } from '@/lib/tables'
 const RATE_DECIMALS = 3;
 
 function MessageContent({ cell }: { cell: MessageCell }): ReactElement {
+  const byline = (
+    <span className="text-xs text-muted-foreground sm:hidden">
+      {cell.sender}, {cell.date}
+    </span>
+  );
   if (cell.text === '' && cell.image === null) {
-    return <span className="text-muted-foreground">Attachment</span>;
+    return (
+      <div className="flex flex-col gap-1">
+        {byline}
+        <span className="text-muted-foreground">Attachment</span>
+      </div>
+    );
   }
   return (
     <div className="flex max-w-md flex-col gap-2 whitespace-normal wrap-anywhere">
+      {byline}
       {cell.text === '' ? null : <span>{cell.text}</span>}
       {cell.image === null ? null : (
         <Image
@@ -69,11 +80,16 @@ function BadgeLabel({ badge }: { badge: Badge | undefined }): ReactElement | nul
   );
 }
 
-function cellClass(cell: Cell, centered: boolean): string {
+function cellClass(cell: Cell, centered: boolean, hidden: boolean): string {
+  const visibility = hidden ? 'hidden sm:table-cell ' : '';
   if (centered) {
-    return 'text-center';
+    return `${visibility}text-center`;
   }
-  return typeof cell === 'number' ? 'text-right tabular-nums' : 'text-left';
+  return `${visibility}${typeof cell === 'number' ? 'text-right tabular-nums' : 'text-left'}`;
+}
+
+function isHidden(model: TableModel, column: number): boolean {
+  return model.hiddenOnMobile?.includes(column) === true;
 }
 
 function headerLabel(header: string): string | undefined {
@@ -88,7 +104,11 @@ function Rows({ model }: { model: TableModel }): ReactElement {
           {row.map((cell, column) => (
             <TableCell
               key={model.headers[column]}
-              className={cellClass(cell, model.centered?.includes(column) === true)}
+              className={cellClass(
+                cell,
+                model.centered?.includes(column) === true,
+                isHidden(model, column),
+              )}
             >
               <CellContent cell={cell} />
               <BadgeLabel badge={badgeFor(model.badges, index, column, model.rows.length)} />
@@ -113,8 +133,13 @@ export function StatTable({ model }: { model: TableModel }): ReactElement {
         <Table aria-labelledby={titleId}>
           <TableHeader>
             <TableRow>
-              {model.headers.map((header) => (
-                <TableHead key={header} scope="col" aria-label={headerLabel(header)}>
+              {model.headers.map((header, column) => (
+                <TableHead
+                  key={header}
+                  scope="col"
+                  aria-label={headerLabel(header)}
+                  className={isHidden(model, column) ? 'hidden sm:table-cell' : undefined}
+                >
                   {header}
                 </TableHead>
               ))}

@@ -4,6 +4,7 @@ export interface MessageCell {
   text: string;
   image: ImageRef | null;
   sender: string;
+  date: string;
 }
 
 export type Cell = string | number | MessageCell;
@@ -52,11 +53,13 @@ export interface TableModel {
   rows: Cell[][];
   badges?: Badges;
   centered?: number[];
+  hiddenOnMobile?: number[];
 }
 
 const NAME_COLUMN = 1;
 const SENDER_COLUMN = 3;
 const REACTION_COLUMN = 3;
+const DATE_COLUMN = 2;
 
 function ranked(rows: Cell[][]): Cell[][] {
   return rows.map((row, index) => [index + 1, ...row]);
@@ -89,12 +92,13 @@ export function funniestTable(stats: ChatStats): TableModel {
     title: 'Most liked messages',
     headers: ['#', 'Laughs', 'Date', 'Sender', 'Message'],
     badges: { column: SENDER_COLUMN, first: AURA_FARMER },
+    hiddenOnMobile: [DATE_COLUMN, SENDER_COLUMN],
     rows: ranked(
       stats.funniest.map((row) => [
         row.laughs,
         row.date,
         row.sender,
-        { text: row.text, image: row.image, sender: row.sender },
+        { text: row.text, image: row.image, sender: row.sender, date: row.date },
       ]),
     ),
   };
